@@ -16,49 +16,42 @@
 - Поставка
 
 ## Основные функции
-### Поставщики
-- create_supplier()
-- get_all_suppliers()
-- get_supplier_by_id()
-- update_supplier()
-- delete_supplier()
-- search_suppliers()
-
-### Товары
-- add_product()
-- get_all_products()
-- get_product_by_id()
-- update_product()
-- delete_product()
-- get_products_by_supplier()
-- assign_supplier_to_product()
-
-### Договоры
-- create_contract()
-- get_all_contracts()
-- get_contract_by_id()
-- update_contract()
-- delete_contract()
-- change_contract_status()
-- upload_contract_file()
-- get_expiring_contracts()
-- terminate_contract()
-
-### Поставки
-- create_delivery_order()
-- get_all_deliveries()
-- get_delivery_by_id()
-- change_delivery_status()
-- accept_delivery()
-- get_delivery_history()
-- generate_acceptance_act()
-- filter_deliveries_by_date()
-
-### Аналитика
-- get_total_spent()
-- get_supplier_rating()
-- get_stock_balance()
-- get_low_stock_products()
+| Название функции | Категория | Назначение |
+|------------------|-----------|------------|
+| `create_supplier()` | Поставщики | Создание нового поставщика |
+| `get_all_suppliers()` | Поставщики | Получение списка всех поставщиков |
+| `get_supplier_by_id()` | Поставщики | Получение данных конкретного поставщика по ID |
+| `update_supplier()` | Поставщики | Обновление данных существующего поставщика |
+| `delete_supplier()` | Поставщики | Удаление поставщика из системы |
+| `search_suppliers()` | Поставщики | Поиск поставщиков по названию или ИНН |
+| `add_product()` | Товары | Добавление нового товара в каталог |
+| `get_all_products()` | Товары | Получение списка всех товаров |
+| `get_product_by_id()` | Товары | Получение данных конкретного товара по ID |
+| `update_product()` | Товары | Обновление данных существующего товара |
+| `delete_product()` | Товары | Удаление товара из каталога |
+| `get_products_by_supplier()` | Товары | Получение списка товаров конкретного поставщика |
+| `assign_supplier_to_product()` | Товары | Назначение поставщика для товара |
+| `create_contract()` | Договоры | Заключение нового договора с поставщиком |
+| `get_all_contracts()` | Договоры | Получение списка всех договоров |
+| `get_contract_by_id()` | Договоры | Получение данных конкретного договора по ID |
+| `update_contract()` | Договоры | Обновление условий договора |
+| `delete_contract()` | Договоры | Удаление договора из системы |
+| `change_contract_status()` | Договоры | Изменение статуса договора (активен/истек/расторгнут) |
+| `upload_contract_file()` | Договоры | Загрузка скан-копии договора |
+| `get_expiring_contracts()` | Договоры | Получение списка договоров с истекающим сроком действия |
+| `terminate_contract()` | Договоры | Расторжение договора |
+| `create_delivery_order()` | Поставки | Создание заказа на поставку |
+| `get_all_deliveries()` | Поставки | Получение списка всех поставок |
+| `get_delivery_by_id()` | Поставки | Получение данных конкретной поставки по ID |
+| `change_delivery_status()` | Поставки | Изменение статуса поставки (Создан → Отправлен → В пути → Принят → Завершен) |
+| `accept_delivery()` | Поставки | Приемка поставки и оприходование товара на склад |
+| `get_delivery_history()` | Поставки | Получение истории всех поставок |
+| `generate_acceptance_act()` | Поставки | Формирование акта приемки товара |
+| `filter_deliveries_by_date()` | Поставки | Фильтрация поставок по дате |
+| `get_total_spent()` | Аналитика | Расчет общей суммы затрат на поставки за период |
+| `get_supplier_rating()` | Аналитика | Формирование рейтинга поставщиков по объему поставок |
+| `get_stock_balance()` | Аналитика | Получение текущих остатков товаров на складе |
+| `get_low_stock_products()` | Аналитика | Получение списка товаров с критическим остатком (ниже порога) |
 
 ## План развития
 На следующих этапах планируется:
