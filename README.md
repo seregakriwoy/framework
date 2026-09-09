@@ -16,7 +16,7 @@
 - Поставка
 
 ## Основные функции
-# Поставщики
+### Поставщики
 - create_supplier()
 - get_all_suppliers()
 - get_supplier_by_id()
@@ -24,7 +24,7 @@
 - delete_supplier()
 - search_suppliers()
 
-# Товары
+### Товары
 - add_product()
 - get_all_products()
 - get_product_by_id()
@@ -33,7 +33,7 @@
 - get_products_by_supplier()
 - assign_supplier_to_product()
 
-# Договоры
+### Договоры
 - create_contract()
 - get_all_contracts()
 - get_contract_by_id()
@@ -44,7 +44,7 @@
 - get_expiring_contracts()
 - terminate_contract()
 
-# Поставки
+### Поставки
 - create_delivery_order()
 - get_all_deliveries()
 - get_delivery_by_id()
@@ -54,7 +54,7 @@
 - generate_acceptance_act()
 - filter_deliveries_by_date()
 
-# Аналитика
+### Аналитика
 - get_total_spent()
 - get_supplier_rating()
 - get_stock_balance()
