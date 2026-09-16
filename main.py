@@ -1,16 +1,22 @@
-# This is a sample Python script.
+from datetime import datetime, date
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+suppliers = []
 
+def create_supplier(name, inn):
+    supplier_id = len(suppliers) + 1
+    created_at = datetime.now()
+    supplier = {"Id": supplier_id, "Название": name, "ИНН": inn, "Дата регистрации": f"{created_at:%d.%m.%Y}"}
+    suppliers.append(supplier)
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def get_all_suppliers():
+    return suppliers
 
+def get_supplier_by_id(supplier_id):
+    for i in suppliers:
+        if i["Id"] == supplier_id:
+            return i
+    return None
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+create_supplier("АО ООН", "125678910")
+print(get_all_suppliers())
+print(get_supplier_by_id(1))
