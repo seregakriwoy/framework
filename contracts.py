@@ -84,8 +84,6 @@ def get_expired_contracts(contracts: list[dict], days: int = 30) -> list[dict]:
     today = date.today()
     result = []
     for contract in contracts:
-        if contract["status"] != STATUS_EXPIRED:
-            continue
         end = datetime.strptime(contract["end_date"], "%Y-%m-%d").date()
         if 0 <= (end - today).days <= days:
             result.append(contract)
