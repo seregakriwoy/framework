@@ -1,6 +1,5 @@
 """Точка входа (ООП-версия)."""
 from datetime import date, datetime
-
 from analytics import (
     get_low_stock_products, get_stock_balance,
     get_supplier_rating, get_total_spent,
@@ -21,6 +20,10 @@ from storage import (
 )
 from utils import input_date, input_float, input_int, input_str
 
+suppliers = load_suppliers()
+products = load_products(suppliers)
+contracts = load_contracts(suppliers)
+deliveries = load_deliveries(suppliers, contracts, products)
 
 def menu() -> None:
     print("\n=== Система управления поставщиками ===")

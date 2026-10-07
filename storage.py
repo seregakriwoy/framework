@@ -1,12 +1,28 @@
-"""Сохранение и загрузка объектов в JSON."""
+"""Сохранение и загрузка объектов предметной области в JSON-файлы.
+
+Модуль отвечает за два направления:
+- JSON → объекты (load_*);
+- объекты → JSON (save_*).
+
+Работа с файлами выполняется через контекстный менеджер,
+ошибки чтения/записи обрабатываются исключениями.
+"""
 import json
 import os
 from typing import Any
 
-from models import Contract, Delivery, Product, Supplier
+from models import (
+    Contract,
+    Delivery,
+    Product,
+    Supplier,
+)
 
+
+# ---------- Вспомогательные функции ----------
 
 def _read(filename: str) -> list[dict[str, Any]]:
+    """Прочитать JSON-файл. Если файла нет или он повреждён — []."""
     if not os.path.exists(filename):
         return []
     try:
@@ -18,7 +34,10 @@ def _read(filename: str) -> list[dict[str, Any]]:
 
 
 def _write(filename: str, data: list[dict[str, Any]]) -> None:
-    os.makedirs(os.path.dirname(filename) or ".", exist_ok=True)
+    """Записать данные в JSON-файл, создав каталог при необходимости."""
+    directory = os.path.dirname(filename)
+    if directory:
+        os.makedirs(directory, exist_ok=True)
     try:
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
@@ -26,50 +45,79 @@ def _write(filename: str, data: list[dict[str, Any]]) -> None:
         print(f"Ошибка сохранения {filename}: {e}")
 
 
-def load_suppliers(filename: str = "data/suppliers.json") -> list[Supplier]:
+# ---------- Поставщики ----------
+
+def load_suppliers(
+    filename: str = "data/suppliers.json",
+) -> list[Supplier]:
+    """Загрузить поставщиков из JSON."""
     return [Supplier.from_data(d) for d in _read(filename)]
 
 
-def save_suppliers(suppliers: list[Supplier],
-                   filename: str = "data/suppliers.json") -> None:
+def save_suppliers(
+    suppliers: list[Supplier],
+    filename: str = "data/suppliers.json",
+) -> None:
+    """Сохранить поставщиков в JSON."""
     _write(filename, [s.to_dict() for s in suppliers])
 
 
-def load_products(suppliers: list[Supplier],
-                  filename: str = "data/products.json") -> list[Product]:
-    result = []
+# ---------- Товары ----------
+
+def load_products(
+    suppliers: list[Supplier],
+    filename: str = "data/products.json",
+) -> list[Product]:
+    """Загрузить товары, привязав их к уже загруженным поставщикам."""
+    result: list[Product] = []
     for d in _read(filename):
-        p = Product.from_data(d, suppliers)
-        if p is not None:
-            result.append(p)
+        product = Product.from_data(d, suppliers)
+        if product is not None:
+            result.append(product)
     return result
 
 
-def save_products(products: list[Product],
-                  filename: str = "data/products.json") -> None:
+def save_products(
+    products: list[Product],
+    filename: str = "data/products.json",
+) -> None:
+    """Сохранить товары в JSON."""
     _write(filename, [p.to_dict() for p in products])
 
 
-def load_contracts(suppliers: list[Supplier],
-                   filename: str = "data/contracts.json") -> list[Contract]:
-    result = []
+# ---------- Договоры ----------
+
+def load_contracts(
+    suppliers: list[Supplier],
+    filename: str = "data/contracts.json",
+) -> list[Contract]:
+    """Загрузить договоры, привязав их к уже загруженным поставщикам."""
+    result: list[Contract] = []
     for d in _read(filename):
-        c = Contract.from_data(d, suppliers)
-        if c is not None:
-            result.append(c)
+        contract = Contract.from_data(d, suppliers)
+        if contract is not None:
+            result.append(contract)
     return result
 
 
-def save_contracts(contracts: list[Contract],
-                   filename: str = "data/contracts.json") -> None:
+def save_contracts(
+    contracts: list[Contract],
+    filename: str = "data/contracts.json",
+) -> None:
+    """Сохранить договоры в JSON."""
     _write(filename, [c.to_dict() for c in contracts])
 
 
-def load_deliveries(suppliers: list[Supplier],
-                    contracts: list[Contract],
-                    products: list[Product],
-                    filename: str = "data/deliveries.json") -> list[Delivery]:
-    result = []
+# ---------- Поставки ----------
+
+def load_deliveries(
+    suppliers: list[Supplier],
+    contracts: list[Contract],
+    products: list[Product],
+    filename: str = "data/deliveries.json",
+) -> list[Delivery]:
+    """Загрузить поставки, привязав их к поставщикам, договорам и товарам."""
+    result: list[Delivery] = []
     for d in _read(filename):
         delivery = Delivery.from_data(d, suppliers, contracts, products)
         if delivery is not None:
@@ -77,6 +125,9 @@ def load_deliveries(suppliers: list[Supplier],
     return result
 
 
-def save_deliveries(deliveries: list[Delivery],
-                    filename: str = "data/deliveries.json") -> None:
+def save_deliveries(
+    deliveries: list[Delivery],
+    filename: str = "data/deliveries.json",
+) -> None:
+    """Сохранить поставки в JSON."""
     _write(filename, [d.to_dict() for d in deliveries])
