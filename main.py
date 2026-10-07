@@ -1,44 +1,28 @@
-"""Точка входа в приложение «Система управления поставщиками»."""
-from contracts import (
-    change_contract_status,
-    create_contract,
-    delete_contract,
-    get_contract_by_id,
-    get_expired_contracts,
-    get_all_contracts,
-    terminate_contract,
-    update_contract,
+"""Точка входа (ООП-версия)."""
+from datetime import date, datetime
+
+from analytics import (
+    get_low_stock_products, get_stock_balance,
+    get_supplier_rating, get_total_spent,
 )
-from products import (
-    add_products,
-    assign_supplier_to_products,
-    delete_products,
-    get_product_by_id,
-    get_products_by_supplier,
-    get_all_products,
-    update_products,
+from models import STATUS_FLOW, DeliveryItem
+from services import (
+    add_product, add_supplier, create_contract, create_delivery,
+    delete_contract, delete_supplier, filter_deliveries_by_date,
+    find_contract_by_id, find_delivery_by_id, find_product_by_id,
+    find_supplier_by_id, get_all_deliveries, get_delivery_history,
+    get_expiring_contracts, get_products_by_supplier,
+    search_suppliers, show_contracts, show_deliveries,
+    show_products, show_suppliers,
 )
 from storage import (
-    load_contracts,
-    load_products,
-    load_suppliers,
-    save_contracts,
-    save_products,
-    save_suppliers,
-)
-from suppliers import (
-    create_supplier,
-    delete_supplier,
-    get_supplier_by_id,
-    search_suppliers,
-    get_all_suppliers,
-    update_supplier,
+    load_contracts, load_deliveries, load_products, load_suppliers,
+    save_contracts, save_deliveries, save_products, save_suppliers,
 )
 from utils import input_date, input_float, input_int, input_str
 
 
 def menu() -> None:
-    """Вывести главное меню."""
     print("\n=== Система управления поставщиками ===")
     print("--- Поставщики ---")
     print("1.  Показать поставщиков")
@@ -61,205 +45,27 @@ def menu() -> None:
     print("16. Изменить статус договора")
     print("17. Расторгнуть договор")
     print("18. Истекающие договоры")
-    print("--- Прочее ---")
+    print("--- Поставки ---")
+    print("19. Создать поставку")
+    print("20. Показать поставки")
+    print("21. Изменить статус поставки")
+    print("22. Принять поставку")
+    print("23. Акт приёмки")
+    print("24. История поставок")
+    print("25. Фильтр поставок по дате")
+    print("--- Аналитика ---")
+    print("26. Общая сумма затрат")
+    print("27. Рейтинг поставщиков")
+    print("28. Остатки на складе")
+    print("29. Товары с низким остатком")
     print("0.  Выход")
 
 
-# ---------- Обработчики поставщиков ----------
-
-def handle_show_suppliers(suppliers, products, contracts) -> None:
-    get_all_suppliers(suppliers)
-
-
-def handle_add_supplier(suppliers, products, contracts) -> None:
-    name = input_str("Название: ")
-    inn = input_str("ИНН: ")
-    create_supplier(suppliers, name, inn)
-    print("Поставщик добавлен.")
-
-
-def handle_search_suppliers(suppliers, products, contracts) -> None:
-    query = input_str("Запрос (название или ИНН): ")
-    get_all_suppliers(search_suppliers(suppliers, query))
-
-
-def handle_update_supplier(suppliers, products, contracts) -> None:
-    sid = input_int("ID поставщика: ")
-    supplier = get_supplier_by_id(suppliers, sid)
-    if supplier is None:
-        print("Поставщик не найден.")
-        return
-    name = input_str("Новое название: ")
-    update_supplier(suppliers, sid, name=name)
-    print("Поставщик обновлён.")
-
-
-def handle_delete_supplier(suppliers, products, contracts) -> None:
-    sid = input_int("ID поставщика: ")
-    # Проверка ссылочной целостности: нельзя удалить,
-    # если у поставщика есть товары или договоры.
-    if any(p["supplier_id"] == sid for p in products):
-        print("Нельзя удалить: у поставщика есть товары.")
-        return
-    if any(c["supplier_id"] == sid for c in contracts):
-        print("Нельзя удалить: у поставщика есть договоры.")
-        return
-    if delete_supplier(suppliers, sid):
-        print("Поставщик удалён.")
-    else:
-        print("Поставщик не найден.")
-
-
-# ---------- Обработчики товаров ----------
-
-def handle_show_products(suppliers, products, contracts) -> None:
-    get_all_products(products)
-
-
-def handle_add_product(suppliers, products, contracts) -> None:
-    name = input_str("Название товара: ")
-    price = input_float("Цена: ")
-    sid = input_int("ID поставщика: ")
-    if get_supplier_by_id(suppliers, sid) is None:
-        print("Поставщик не найден.")
-        return
-    add_products(products, name, price, sid)
-    print("Товар добавлен.")
-
-
-def handle_products_by_supplier(suppliers, products, contracts) -> None:
-    sid = input_int("ID поставщика: ")
-    get_all_products(get_products_by_supplier(products, sid))
-
-
-def handle_update_product(suppliers, products, contracts) -> None:
-    pid = input_int("ID товара: ")
-    if get_product_by_id(products, pid) is None:
-        print("Товар не найден.")
-        return
-    name = input_str("Новое название: ")
-    price = input_float("Новая цена: ")
-    update_products(products, pid, name=name, price=price)
-    print("Товар обновлён.")
-
-
-def handle_delete_product(suppliers, products, contracts) -> None:
-    pid = input_int("ID товара: ")
-    if delete_products(products, pid):
-        print("Товар удалён.")
-    else:
-        print("Товар не найден.")
-
-
-def handle_assign_supplier(suppliers, products, contracts) -> None:
-    pid = input_int("ID товара: ")
-    sid = input_int("ID нового поставщика: ")
-    if get_supplier_by_id(suppliers, sid) is None:
-        print("Поставщик не найден.")
-        return
-    if assign_supplier_to_products(products, pid, sid):
-        print("Поставщик назначен.")
-    else:
-        print("Товар не найден.")
-
-
-# ---------- Обработчики договоров ----------
-
-def handle_show_contracts(suppliers, products, contracts) -> None:
-    get_all_contracts(contracts)
-
-
-def handle_add_contract(suppliers, products, contracts) -> None:
-    sid = input_int("ID поставщика: ")
-    if get_supplier_by_id(suppliers, sid) is None:
-        print("Поставщик не найден.")
-        return
-    number = input_str("Номер договора: ")
-    start = input_date("Дата начала (ДД.ММ.ГГГГ): ")
-    end = input_date("Дата окончания (ДД.ММ.ГГГГ): ")
-    if end <= start:
-        print("Дата окончания должна быть позже даты начала.")
-        return
-    create_contract(contracts, sid, number, start, end)
-    print("Договор создан.")
-
-
-def handle_update_contract(suppliers, products, contracts) -> None:
-    cid = input_int("ID договора: ")
-    if get_contract_by_id(contracts, cid) is None:
-        print("Договор не найден.")
-        return
-    number = input_str("Новый номер: ")
-    start = input_date("Новая дата начала (ДД.ММ.ГГГГ): ")
-    end = input_date("Новая дата окончания (ДД.ММ.ГГГГ): ")
-    if end <= start:
-        print("Дата окончания должна быть позже даты начала.")
-        return
-    update_contract(contracts, cid, number=number, start=start, end=end)
-    print("Договор обновлён.")
-
-
-def handle_delete_contract(suppliers, products, contracts) -> None:
-    cid = input_int("ID договора: ")
-    if delete_contract(contracts, cid):
-        print("Договор удалён.")
-    else:
-        print("Договор не найден.")
-
-
-def handle_change_contract_status(suppliers, products, contracts) -> None:
-    cid = input_int("ID договора: ")
-    status = input_str("Новый статус (активен/истёк/расторгнут): ")
-    if change_contract_status(contracts, cid, status):
-        print("Статус изменён.")
-    else:
-        print("Договор не найден или недопустимый статус.")
-
-
-def handle_terminate_contract(suppliers, products, contracts) -> None:
-    cid = input_int("ID договора: ")
-    if terminate_contract(contracts, cid):
-        print("Договор расторгнут.")
-    else:
-        print("Договор не найден.")
-
-
-def handle_expiring_contracts(suppliers, products, contracts) -> None:
-    days = input_int("За сколько дней считать истекающими? ")
-    get_all_contracts(get_expired_contracts(contracts, days=days))
-
-
-# ---------- Карта обработчиков ----------
-
-HANDLERS: dict[int, callable] = {
-    1: handle_show_suppliers,
-    2: handle_add_supplier,
-    3: handle_search_suppliers,
-    4: handle_update_supplier,
-    5: handle_delete_supplier,
-    6: handle_show_products,
-    7: handle_add_product,
-    8: handle_products_by_supplier,
-    9: handle_update_product,
-    10: handle_delete_product,
-    11: handle_assign_supplier,
-    12: handle_show_contracts,
-    13: handle_add_contract,
-    14: handle_update_contract,
-    15: handle_delete_contract,
-    16: handle_change_contract_status,
-    17: handle_terminate_contract,
-    18: handle_expiring_contracts,
-}
-
-
-# ---------- Точка входа ----------
-
 def main() -> None:
-    """Точка запуска: загрузка данных, меню, сохранение."""
     suppliers = load_suppliers()
-    products = load_products()
-    contracts = load_contracts()
+    products = load_products(suppliers)
+    contracts = load_contracts(suppliers)
+    deliveries = load_deliveries(suppliers, contracts, products)
 
     while True:
         menu()
@@ -270,10 +76,217 @@ def main() -> None:
                 save_suppliers(suppliers)
                 save_products(products)
                 save_contracts(contracts)
+                save_deliveries(deliveries)
                 print("Данные сохранены. Выход.")
                 break
-            case _ if choice in HANDLERS:
-                HANDLERS[choice](suppliers, products, contracts)
+
+            case 1:
+                show_suppliers(suppliers)
+            case 2:
+                add_supplier(suppliers, input_str("Название: "),
+                             input_str("ИНН: "))
+            case 3:
+                show_suppliers(search_suppliers(
+                    suppliers, input_str("Запрос: ")))
+            case 4:
+                sid = input_int("ID поставщика: ")
+                s = find_supplier_by_id(suppliers, sid)
+                if s is None:
+                    print("Поставщик не найден.")
+                else:
+                    s.update(name=input_str("Новое название: "))
+                    print("Поставщик обновлён.")
+            case 5:
+                sid = input_int("ID поставщика: ")
+                print("Удалено." if delete_supplier(suppliers, products,
+                                                    contracts, sid)
+                      else "Нельзя удалить: поставщик не найден "
+                           "или на него есть ссылки.")
+
+            case 6:
+                show_products(products)
+            case 7:
+                sid = input_int("ID поставщика: ")
+                s = find_supplier_by_id(suppliers, sid)
+                if s is None:
+                    print("Поставщик не найден.")
+                else:
+                    add_product(products, input_str("Название: "),
+                                input_float("Цена: "), s)
+            case 8:
+                sid = input_int("ID поставщика: ")
+                s = find_supplier_by_id(suppliers, sid)
+                if s is None:
+                    print("Поставщик не найден.")
+                else:
+                    show_products(get_products_by_supplier(products, s))
+            case 9:
+                pid = input_int("ID товара: ")
+                p = find_product_by_id(products, pid)
+                if p is None:
+                    print("Товар не найден.")
+                else:
+                    p.update(name=input_str("Новое название: "),
+                             price=input_float("Новая цена: "))
+                    print("Товар обновлён.")
+            case 10:
+                pid = input_int("ID товара: ")
+                p = find_product_by_id(products, pid)
+                if p is None:
+                    print("Товар не найден.")
+                else:
+                    products.remove(p)
+                    print("Товар удалён.")
+            case 11:
+                pid = input_int("ID товара: ")
+                sid = input_int("ID нового поставщика: ")
+                p = find_product_by_id(products, pid)
+                s = find_supplier_by_id(suppliers, sid)
+                if p is None or s is None:
+                    print("Товар или поставщик не найден.")
+                else:
+                    p.assign_supplier(s)
+                    print("Поставщик назначен.")
+
+            case 12:
+                show_contracts(contracts)
+            case 13:
+                sid = input_int("ID поставщика: ")
+                s = find_supplier_by_id(suppliers, sid)
+                if s is None:
+                    print("Поставщик не найден.")
+                else:
+                    number = input_str("Номер: ")
+                    start = input_date("Начало (ДД.ММ.ГГГГ): ")
+                    end = input_date("Окончание (ДД.ММ.ГГГГ): ")
+                    if end <= start:
+                        print("Окончание должно быть позже начала.")
+                    else:
+                        create_contract(contracts, s, number, start, end)
+            case 14:
+                cid = input_int("ID договора: ")
+                c = find_contract_by_id(contracts, cid)
+                if c is None:
+                    print("Договор не найден.")
+                else:
+                    c.update(number=input_str("Новый номер: "),
+                             start_date=input_date("Новое начало: "),
+                             end_date=input_date("Новое окончание: "))
+                    print("Договор обновлён.")
+            case 15:
+                cid = input_int("ID договора: ")
+                print("Удалено." if delete_contract(contracts, deliveries,
+                                                    cid)
+                      else "Нельзя удалить: договор не найден "
+                           "или на него есть ссылки.")
+            case 16:
+                cid = input_int("ID договора: ")
+                c = find_contract_by_id(contracts, cid)
+                if c is None:
+                    print("Договор не найден.")
+                else:
+                    status = input_str("Новый статус "
+                                       "(активен/истёк/расторгнут): ")
+                    print("Изменено." if c.change_status(status)
+                          else "Недопустимый статус.")
+            case 17:
+                cid = input_int("ID договора: ")
+                c = find_contract_by_id(contracts, cid)
+                if c is None:
+                    print("Договор не найден.")
+                else:
+                    c.terminate()
+                    print("Договор расторгнут.")
+            case 18:
+                days = input_int("За сколько дней? ")
+                show_contracts(get_expiring_contracts(contracts, days))
+
+            case 19:
+                sid = input_int("ID поставщика: ")
+                cid = input_int("ID договора: ")
+                s = find_supplier_by_id(suppliers, sid)
+                c = find_contract_by_id(contracts, cid)
+                if s is None or c is None:
+                    print("Поставщик или договор не найден.")
+                else:
+                    ddate = input_date("Дата поставки (ДД.ММ.ГГГГ): ")
+                    items: list[DeliveryItem] = []
+                    while True:
+                        pid = input_int("ID товара (0 — закончить): ")
+                        if pid == 0:
+                            break
+                        p = find_product_by_id(products, pid)
+                        if p is None:
+                            print("Товар не найден.")
+                            continue
+                        qty = input_int("Количество: ")
+                        price = input_float("Цена за единицу: ")
+                        items.append(DeliveryItem(p, qty, price))
+                    if not items:
+                        print("Поставка без позиций — отменено.")
+                    else:
+                        create_delivery(deliveries, s, c, ddate, items)
+                        print("Поставка создана.")
+            case 20:
+                show_deliveries(get_all_deliveries(deliveries))
+            case 21:
+                did = input_int("ID поставки: ")
+                d = find_delivery_by_id(deliveries, did)
+                if d is None:
+                    print("Поставка не найдена.")
+                else:
+                    print("Текущий статус:", d.status)
+                    print("Следующий:", d.next_status())
+                    new_status = input_str("Новый статус "
+                                           f"({'/'.join(STATUS_FLOW)}): ")
+                    print("Изменено." if d.change_status(new_status)
+                          else "Недопустимый переход.")
+            case 22:
+                did = input_int("ID поставки: ")
+                d = find_delivery_by_id(deliveries, did)
+                if d is None:
+                    print("Поставка не найдена.")
+                else:
+                    print("Принята." if d.accept()
+                          else "Приёмка возможна только из статуса «В пути».")
+            case 23:
+                did = input_int("ID поставки: ")
+                d = find_delivery_by_id(deliveries, did)
+                if d is None:
+                    print("Поставка не найдена.")
+                else:
+                    print(d.acceptance_act())
+            case 24:
+                sid = input_int("ID поставщика (0 — все): ")
+                if sid == 0:
+                    show_deliveries(get_delivery_history(deliveries))
+                else:
+                    s = find_supplier_by_id(suppliers, sid)
+                    if s is None:
+                        print("Поставщик не найден.")
+                    else:
+                        show_deliveries(get_delivery_history(deliveries, s))
+            case 25:
+                start = input_date("Начало (ДД.ММ.ГГГГ): ")
+                end = input_date("Окончание (ДД.ММ.ГГГГ): ")
+                show_deliveries(filter_deliveries_by_date(
+                    deliveries, start, end))
+
+            case 26:
+                start = input_date("Начало (ДД.ММ.ГГГГ): ")
+                end = input_date("Окончание (ДД.ММ.ГГГГ): ")
+                print(f"Итого: {get_total_spent(deliveries, start, end):.2f}")
+            case 27:
+                for supplier, total in get_supplier_rating(deliveries):
+                    print(f"{supplier.name}: {total:.2f} руб.")
+            case 28:
+                for pid, qty in get_stock_balance(products).items():
+                    print(f"Товар #{pid}: {qty}")
+            case 29:
+                threshold = input_int("Порог: ")
+                for p in get_low_stock_products(products, threshold):
+                    print(p)
+
             case _:
                 print("Неверный выбор. Повторите ввод.")
 

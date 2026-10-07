@@ -1,29 +1,34 @@
-from datetime import datetime, date
+"""Вспомогательные функции безопасного ввода."""
+from datetime import date, datetime
+
 
 def input_int(prompt: str) -> int:
     while True:
         try:
             return int(input(prompt))
         except ValueError:
-            print(f"Please enter an integer.")
+            print("Ошибка: введите целое число.")
 
-def input_str(prompt: str) -> str:
-    while True:
-        value = input(prompt).strip()
-        if value:
-            return value
-        print(f"Please enter not null string.")
-
-def input_date(prompt: str) -> date:
-    while True:
-        try:
-            return datetime.strptime(prompt, "%Y-%m-%d").date()
-        except ValueError:
-            print(f"Please enter a valid date.")
 
 def input_float(prompt: str) -> float:
     while True:
         try:
             return float(input(prompt))
         except ValueError:
-            print(f"Please enter a valid float.")
+            print("Ошибка: введите число.")
+
+
+def input_str(prompt: str) -> str:
+    while True:
+        value = input(prompt).strip()
+        if value:
+            return value
+        print("Ошибка: строка не может быть пустой.")
+
+
+def input_date(prompt: str) -> date:
+    while True:
+        try:
+            return datetime.strptime(input(prompt), "%d.%m.%Y").date()
+        except ValueError:
+            print("Ошибка: используйте формат ДД.ММ.ГГГГ.")
