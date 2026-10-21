@@ -1,0 +1,23 @@
+<div class="col-md-6 col-lg-4">
+    <article class="card delivery-card mb-3">
+        <div class="card-body">
+            <h2 class="card-title h5">
+                Поставка №{{ delivery.id }}
+            </h2>
+            <p class="card-text">
+                <strong>Поставщик:</strong>
+                <a href="{% url 'suppliers:detail' delivery.supplier.id %}">
+                    {{ delivery.supplier.name }}
+                </a><br>
+                <strong>Дата:</strong>
+                {{ delivery.delivery_date|date:"d.m.Y" }}<br>
+                <strong>Сумма:</strong>
+                {{ delivery.total|floatformat:2 }} руб.<br>
+                <strong>Статус:</strong>
+                {% include "deliveries/includes/delivery_status.html" %}
+            </p>
+            <a href="{% url 'deliveries:detail' delivery.id %}"
+               class="btn btn-sm btn-primary">Подробнее</a>
+        </div>
+    </article>
+</div>

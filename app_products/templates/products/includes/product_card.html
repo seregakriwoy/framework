@@ -1,0 +1,25 @@
+<div class="col-md-6 col-lg-4">
+    <article class="card product-card mb-3">
+        <div class="card-body">
+            <h2 class="card-title h5">
+                {{ product.name|default:"Без названия" }}
+            </h2>
+            <p class="card-text">
+                <strong>Цена:</strong>
+                {{ product.price|floatformat:2 }} руб.<br>
+                <strong>Поставщик:</strong>
+                <a href="{% url 'suppliers:detail' product.supplier.id %}">
+                    {{ product.supplier.name }}
+                </a><br>
+                <strong>Остаток:</strong>
+                {% if product.is_low_stock %}
+                    <span class="badge bg-danger">{{ product.stock }}</span>
+                {% else %}
+                    <span class="badge bg-success">{{ product.stock }}</span>
+                {% endif %}
+            </p>
+            <a href="{% url 'products:detail' product.id %}"
+               class="btn btn-sm btn-primary">Подробнее</a>
+        </div>
+    </article>
+</div>

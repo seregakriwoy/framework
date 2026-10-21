@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}{{ supplier.name }} — SupplyManager{% endblock %}
+
+{% block content %}
+<div class="card mb-3">
+    <div class="card-body">
+        <h1 class="card-title">{{ supplier.name }}</h1>
+        <p class="card-text"><strong>ID:</strong> {{ supplier.id }}</p>
+        <p class="card-text"><strong>ИНН:</strong> {{ supplier.inn }}</p>
+        <p class="card-text"><strong>Дата регистрации:</strong> {{ supplier.created_at }}</p>
+    </div>
+</div>
+
+<h2 class="h4">Товары поставщика</h2>
+{% if products %}
+    <ul class="list-group mb-3">
+        {% for product in products %}
+            <li class="list-group-item d-flex justify-content-between">
+                <span>{{ product.name }}</span>
+                <span class="text-muted">{{ product.price|floatformat:2 }} руб.</span>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>У поставщика пока нет товаров.</p>
+{% endif %}
+
+<a href="{% url 'suppliers:list' %}" class="btn btn-outline-secondary mt-3">← к списку поставщиков</a>
+{% endblock %}

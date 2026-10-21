@@ -1,0 +1,15 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'homepage:index' %}">
+            <img src="{% static 'homepage/img/logo.png' %}"
+                 alt="SupplyManager" class="supply-logo">
+        </a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="{% url 'suppliers:list' %}">Поставщики</a>
+            <a class="nav-link" href="{% url 'products:list' %}">Товары</a>
+            <a class="nav-link" href="{% url 'contracts:list' %}">Договоры</a>
+            <a class="nav-link" href="{% url 'deliveries:list' %}">Поставки</a>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,21 @@
+{% if delivery.status == "Создан" %}
+    <span class="badge bg-secondary delivery-status">
+        {{ delivery.status }}
+    </span>
+{% elif delivery.status == "Отправлен" %}
+    <span class="badge bg-info text-dark delivery-status">
+        {{ delivery.status }}
+    </span>
+{% elif delivery.status == "В пути" %}
+    <span class="badge bg-warning text-dark delivery-status">
+        {{ delivery.status }}
+    </span>
+{% elif delivery.status == "Принят" %}
+    <span class="badge bg-success delivery-status">
+        {{ delivery.status }}
+    </span>
+{% else %}
+    <span class="badge bg-dark delivery-status">
+        {{ delivery.status }}
+    </span>
+{% endif %}

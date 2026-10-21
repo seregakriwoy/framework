@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Поставки — SupplyManager{% endblock %}
+
+{% block content %}
+<h1>Поставки</h1>
+<p>Всего поставок: {{ deliveries|length }}</p>
+
+<div class="row">
+    {% for delivery in deliveries %}
+        {% include "deliveries/includes/delivery_card.html" %}
+    {% empty %}
+        <p>Поставки не найдены.</p>
+    {% endfor %}
+</div>
+
+<form method="get" action="{% url 'deliveries:filter' %}"
+      class="card p-3 mb-3">
+    <h2 class="h5">Фильтр по дате поставки</h2>
+    <div class="row g-2 align-items-end">
+        <div class="col-auto">
+            <label class="form-label" for="start">Начало</label>
+            <input type="date" id="start" name="start"
+                   class="form-control" required>
+        </div>
+        <div class="col-auto">
+            <label class="form-label" for="end">Окончание</label>
+            <input type="date" id="end" name="end"
+                   class="form-control" required>
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" type="submit">
+                Показать
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

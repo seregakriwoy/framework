@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск поставщиков — SupplyManager{% endblock %}
+
+{% block content %}
+<h1>Поиск поставщиков</h1>
+
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="q" value="{{ query }}"
+               class="form-control"
+               placeholder="Название или ИНН">
+        <button class="btn btn-primary" type="submit">Найти</button>
+    </div>
+</form>
+
+{% if results %}
+    <p>Найдено: {{ results|length }}</p>
+    <ul class="list-group">
+        {% for supplier in results %}
+            <li class="list-group-item d-flex justify-content-between">
+                <a href="{% url 'suppliers:detail' supplier.id %}">
+                    {{ supplier.name }}
+                </a>
+                <span class="text-muted">ИНН: {{ supplier.inn }}</span>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Ничего не найдено.</p>
+{% endif %}
+{% endblock %}

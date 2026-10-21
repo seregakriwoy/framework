@@ -1,0 +1,13 @@
+{% if contract.status == "активен" %}
+    <span class="badge bg-success contract-status">
+        {{ contract.status }}
+    </span>
+{% elif contract.status == "истёк" %}
+    <span class="badge bg-warning text-dark contract-status">
+        {{ contract.status }}
+    </span>
+{% else %}
+    <span class="badge bg-secondary contract-status">
+        {{ contract.status }}
+    </span>
+{% endif %}

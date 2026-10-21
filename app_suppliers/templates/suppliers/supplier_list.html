@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Поставщики — SupplyManager{% endblock %}
+
+{% block content %}
+<h1>Поставщики</h1>
+<p>Всего поставщиков: {{ suppliers|length }}</p>
+
+<div class="row">
+    {% for supplier in suppliers %}
+        {% include "suppliers/includes/supplier_card.html" %}
+    {% empty %}
+        <p>Поставщики не найдены.</p>
+    {% endfor %}
+</div>
+{% endblock %}

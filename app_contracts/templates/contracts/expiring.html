@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Истекающие договоры — SupplyManager{% endblock %}
+
+{% block content %}
+<h1>Истекающие договоры (30 дней)</h1>
+<ul class="list-group mb-3">
+    {% for contract in contracts %}
+        <li class="list-group-item">
+            <a href="{% url 'contracts:detail' contract.id %}">
+                №{{ contract.number }}
+            </a>
+            ({{ contract.supplier.name }}) —
+            до {{ contract.end_date|date:"d.m.Y" }}
+        </li>
+    {% empty %}
+        <li class="list-group-item">
+            Нет истекающих договоров.
+        </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'contracts:list' %}"
+   class="btn btn-outline-secondary">← к списку договоров</a>
+{% endblock %}

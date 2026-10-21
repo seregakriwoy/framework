@@ -1,0 +1,12 @@
+<div class="col-md-6 col-lg-4">
+    <article class="card supplier-card mb-3">
+        <div class="card-body">
+            <h2 class="card-title h5">{{ supplier.name|default:"Без названия" }}</h2>
+            <p class="card-text">
+                <strong>ИНН:</strong> {{ supplier.inn }}<br>
+                <strong>Зарегистрирован:</strong> {{ supplier.created_at }}
+            </p>
+            <a href="{% url 'suppliers:detail' supplier.id %}" class="btn btn-sm btn-primary">Подробнее</a>
+        </div>
+    </article>
+</div>

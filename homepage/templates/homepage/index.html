@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Главная — SupplyManager{% endblock %}
+
+{% block content %}
+<h1 class="display-4">SupplyManager</h1>
+<p class="lead">
+    Система управления поставщиками, товарами, договорами и поставками.
+</p>
+<p>Основные разделы:</p>
+<div>
+    <a href="{% url 'suppliers:list' %}" class="btn btn-primary me-2">
+        Поставщики
+    </a>
+    <a href="{% url 'products:list' %}" class="btn btn-primary me-2">
+        Товары
+    </a>
+    <a href="{% url 'contracts:list' %}" class="btn btn-secondary me-2">
+        Договоры
+    </a>
+    <a href="{% url 'deliveries:list' %}" class="btn btn-secondary">
+        Поставки
+    </a>
+</div>
+{% endblock %}
