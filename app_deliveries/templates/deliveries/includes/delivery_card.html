@@ -6,8 +6,8 @@
             </h2>
             <p class="card-text">
                 <strong>Поставщик:</strong>
-                <a href="{% url 'suppliers:detail' delivery.supplier.id %}">
-                    {{ delivery.supplier.name }}
+                <a href="{% url 'suppliers:detail' delivery.supplier_id %}">
+                    {{ delivery.supplier_name }}
                 </a><br>
                 <strong>Дата:</strong>
                 {{ delivery.delivery_date|date:"d.m.Y" }}<br>

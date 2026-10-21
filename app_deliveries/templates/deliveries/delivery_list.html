@@ -8,7 +8,7 @@
 
 <div class="row">
     {% for delivery in deliveries %}
-        {% include "deliveries/includes/delivery_card.html" %}
+        {% include "deliveries/includes/delivery_card.html" with delivery=delivery %}
     {% empty %}
         <p>Поставки не найдены.</p>
     {% endfor %}

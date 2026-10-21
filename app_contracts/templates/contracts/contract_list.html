@@ -1,19 +1,14 @@
+<!-- contract_list.html -->
 {% extends "base.html" %}
-
-{% block title %}Договоры — SupplyManager{% endblock %}
-
 {% block content %}
 <h1>Договоры</h1>
 <p>Всего договоров: {{ contracts|length }}</p>
-
 <ul class="list-group mb-3">
     {% for contract in contracts %}
         <li class="list-group-item d-flex justify-content-between">
             <span>
-                <a href="{% url 'contracts:detail' contract.id %}">
-                    №{{ contract.number }}
-                </a>
-                ({{ contract.supplier.name }})
+                <a href="{% url 'contracts:detail' contract.id %}">№{{ contract.number }}</a>
+                ({{ contract.supplier_name }})
             </span>
             {% include "contracts/includes/contract_status.html" %}
         </li>
@@ -21,9 +16,5 @@
         <li class="list-group-item">Договоры не найдены.</li>
     {% endfor %}
 </ul>
-
-<a href="{% url 'contracts:expiring' %}"
-   class="btn btn-outline-warning">
-    Истекающие договоры (30 дней)
-</a>
+<a href="{% url 'contracts:expiring' %}" class="btn btn-outline-warning">Истекающие договоры (30 дней)</a>
 {% endblock %}

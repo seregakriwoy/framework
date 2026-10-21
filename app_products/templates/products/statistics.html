@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Статистика по поставщикам</h1>
+{% for stat in stats %}
+    <div class="card">
+        <h3>{{ stat.supplier_name }}</h3>
+        <p>Количество товаров: {{ stat.product_count }}</p>
+    </div>
+{% empty %}
+    <p>Данные отсутствуют.</p>
+{% endfor %}
+{% endblock %}
