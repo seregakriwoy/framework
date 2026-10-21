@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Фильтр поставок — SupplyManager{% endblock %}
+
+{% block content %}
+<h1>Результаты фильтрации</h1>
+<p>Период: с <strong>{{ start }}</strong> по <strong>{{ end }}</strong></p>
+
+<div class="row">
+    {% for delivery in deliveries %}
+        <div class="col-md-4 mb-3">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'deliveries:detail' delivery.id %}">Поставка №{{ delivery.id }}</a>
+                    </h5>
+                    <p class="card-text">Поставщик: {{ delivery.supplier_name }}</p>
+                    <p class="card-text">Дата: {{ delivery.delivery_date }}</p>
+                    <p class="card-text">Статус: {{ delivery.status }}</p>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <p>За выбранный период поставок не найдено.</p>
+        </div>
+    {% endfor %}
+</div>
+
+<a href="{% url 'deliveries:list' %}" class="btn btn-outline-secondary mt-3">
+    ← к списку поставок
+</a>
+{% endblock %}

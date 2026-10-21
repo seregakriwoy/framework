@@ -4,6 +4,6 @@
     "name": "Блок шерсти",
     "price": 100.0,
     "supplier_id": 1,
-    "stock": 0
+    "stock": 1000
   }
 ]
