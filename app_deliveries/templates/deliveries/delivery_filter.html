@@ -14,7 +14,7 @@
                     <h5 class="card-title">
                         <a href="{% url 'deliveries:detail' delivery.id %}">Поставка №{{ delivery.id }}</a>
                     </h5>
-                    <p class="card-text">Поставщик: {{ delivery.supplier_name }}</p>
+                    <p class="card-text">Поставщик: {{ delivery.supplier.name }}</p>
                     <p class="card-text">Дата: {{ delivery.delivery_date }}</p>
                     <p class="card-text">Статус: {{ delivery.status }}</p>
                 </div>

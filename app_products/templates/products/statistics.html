@@ -2,10 +2,12 @@
 
 {% block content %}
 <h1>Статистика по поставщикам</h1>
+<p>Общий остаток: {{ stock }} шт.</p>
 {% for stat in stats %}
     <div class="card">
-        <h3>{{ stat.supplier_name }}</h3>
+        <h3>{{ stat.name }}</h3>
         <p>Количество товаров: {{ stat.product_count }}</p>
+        <p>Ожидают приёмки: {{ stat.open_count }} · Завершены: {{ stat.completed_count }} · Отменены: {{ stat.cancelled_count }}</p>
     </div>
 {% empty %}
     <p>Данные отсутствуют.</p>

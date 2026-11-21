@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Фото товара — {{ product.name }}{% endblock %}
+{% block content %}
+<h1>Фото товара «{{ product.name }}»</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary">Сохранить фото</button>
+    <a href="{% url 'products:detail' product.pk %}">К товару</a>
+</form>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Оформление поставки — SupplyManager{% endblock %}
+{% block content %}
+<h1>{% if delivery.pk %}Редактирование поставки №{{ delivery.pk }}{% else %}Новая поставка{% endif %}</h1>
+<form method="post" class="card p-3">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <h2>Товары</h2>
+    {{ items.management_form }}
+    {{ items.non_form_errors }}
+    <div id="positions">
+        {% for row in items %}<fieldset class="border p-2 mb-2">{{ row.as_p }}</fieldset>{% endfor %}
+    </div>
+    <template id="empty-position"><fieldset class="border p-2 mb-2">{{ items.empty_form.as_p }}</fieldset></template>
+    <div><button type="button" id="add-position">Добавить позицию</button>
+    <button class="btn btn-primary">Сохранить поставку</button></div>
+</form>
+<script>
+document.getElementById('add-position').addEventListener('click', () => {
+    const count = document.getElementById('id_items-TOTAL_FORMS');
+    const template = document.getElementById('empty-position').innerHTML;
+    document.getElementById('positions').insertAdjacentHTML('beforeend', template.replaceAll('__prefix__', count.value));
+    count.value = Number(count.value) + 1;
+});
+</script>
+{% endblock %}

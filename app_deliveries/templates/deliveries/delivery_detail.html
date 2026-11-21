@@ -9,17 +9,23 @@
 {% if delivery %}
     <div class="card mb-3">
         <div class="card-body">
+            {% if delivery.status == "Создан" %}
+            <a href="{% url 'deliveries:edit' delivery.pk %}">Редактировать</a>
+            <form method="post" action="{% url 'deliveries:cancel' delivery.pk %}">
+                {% csrf_token %}<button class="btn btn-outline-danger">Отменить поставку</button>
+            </form>
+            {% endif %}
             <h1 class="card-title">Поставка №{{ delivery.id }}</h1>
             <p class="card-text">
                 <strong>Поставщик:</strong>
                 <a href="{% url 'suppliers:detail' delivery.supplier_id %}">
-                    {{ delivery.supplier_name }}
+                    {{ delivery.supplier.name }}
                 </a>
             </p>
             <p class="card-text">
                 <strong>Договор:</strong>
                 <a href="{% url 'contracts:detail' delivery.contract_id %}">
-                    №{{ delivery.contract_number }}
+                    №{{ delivery.contract.number }}
                 </a>
             </p>
             <p class="card-text">
@@ -47,11 +53,11 @@
                 <tr>
                     <td>
                         <a href="{% url 'products:detail' item.product_id %}">
-                            {{ item.product_name }}
+                            {{ item.product.name }}
                         </a>
                     </td>
                     <td>{{ item.quantity }}</td>
-                    <td>{{ item.price|floatformat:2 }}</td>
+                    <td>{{ item.product.price|floatformat:2 }}</td>
                     <td>{{ item.amount|floatformat:2 }}</td>
                 </tr>
             {% endfor %}

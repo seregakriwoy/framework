@@ -2,9 +2,9 @@
     <div class="card h-100">
         <div class="card-body">
             <h5 class="card-title">
-                <a href="{% url 'products:detail' product.id %}">{{ product.name }}</a>
+                <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
             </h5>
-            <p class="card-text">Поставщик: {{ product.supplier_name }}</p>
+            <p class="card-text">Поставщик: {{ product.supplier.name }}</p>
             <p class="card-text">Цена: {{ product.price|floatformat:2 }} руб.</p>
             <p class="card-text">Остаток: {{ product.stock }} шт.</p>
         </div>

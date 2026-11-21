@@ -10,6 +10,8 @@
     <div class="card">
         <div class="card-body">
             <h1 class="card-title">{{ product.name }}</h1>
+            {% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid" width="320">{% endif %}
+            <p><a href="{% url 'products:image' product.pk %}">Изменить фото товара</a></p>
             <p class="card-text"><strong>ID:</strong> {{ product.id }}</p>
             <p class="card-text">
                 <strong>Цена:</strong> {{ product.price|floatformat:2 }} руб.
@@ -17,12 +19,12 @@
             <p class="card-text">
                 <strong>Поставщик:</strong>
                 <a href="{% url 'suppliers:detail' product.supplier_id %}">
-                    {{ product.supplier_name }}
+                    {{ product.supplier.name }}
                 </a>
             </p>
             <p class="card-text">
                 <strong>Остаток:</strong> {{ product.stock }}
-                {% if product.is_low_stock %}
+                {% if product.stock < 10 %}
                     <span class="badge bg-danger">низкий остаток</span>
                 {% else %}
                     <span class="badge bg-success">в наличии</span>

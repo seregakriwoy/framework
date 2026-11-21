@@ -9,7 +9,7 @@
             <p class="card-text">
                 <strong>Поставщик:</strong>
                 <a href="{% url 'suppliers:detail' contract.supplier_id %}">
-                    {{ contract.supplier_name }}
+                    {{ contract.supplier.name }}
                 </a>
             </p>
             <p class="card-text">
